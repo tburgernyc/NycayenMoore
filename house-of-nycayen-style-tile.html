@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>House of Nycayen — Brand System / Style Tile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0B0C; --ink-2:#15100F; --ink-3:#1E1815; --oxblood:#3A1620; --aubergine:#241326;
+    --ivory:#F3ECE2; --muted:#B9A99A; --gold:#C8A45C; --gold-soft:#E4CE97;
+    --line:rgba(243,236,226,.14); --irid:linear-gradient(100deg,#E7B6C6,#C8A45C 26%,#9FD7C9 52%,#B9A6E0 76%,#E7B6C6);
+    --serif:'Fraunces',Georgia,serif; --grotesk:'Hanken Grotesk',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--ivory);font-family:var(--grotesk);-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(120% 80% at 50% -5%,rgba(58,22,32,.45),rgba(36,19,38,.22) 35%,rgba(14,11,12,0) 62%);}
+  .grain{position:fixed;inset:-100%;z-index:50;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+  .wrap{max-width:1100px;margin:0 auto;padding:clamp(40px,7vw,96px) clamp(24px,5vw,64px) 96px;position:relative;z-index:1}
+
+  .eyebrow{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;font-weight:600;
+    background:var(--irid);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  header{margin-bottom:clamp(48px,8vw,96px)}
+  .word{font-family:var(--serif);font-weight:360;font-variation-settings:"opsz" 144,"WONK" 1;
+    font-size:clamp(2.6rem,8vw,6rem);line-height:.9;letter-spacing:-.02em;margin:18px 0 14px}
+  .word em{font-style:italic;font-weight:300;color:var(--gold-soft)}
+  .tagline{color:var(--muted);font-family:var(--serif);font-style:italic;font-size:clamp(1rem,2vw,1.4rem)}
+
+  section{margin-bottom:clamp(40px,7vw,80px)}
+  .sec-label{display:flex;align-items:baseline;gap:16px;margin-bottom:28px}
+  .sec-label .n{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:.95rem}
+  .sec-label .t{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+  .sec-label .bar{flex:1;height:1px;background:var(--line)}
+
+  /* palette */
+  .sw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  .sw{border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+  .sw .chip{height:90px}
+  .sw .meta{padding:12px 14px;background:var(--ink-2)}
+  .sw .role{font-size:.78rem;color:var(--ivory);font-weight:500}
+  .sw .hex{font-size:.7rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-top:3px}
+  .irid-bar{height:64px;border-radius:6px;background:var(--irid);margin-top:14px;border:1px solid var(--line)}
+  .irid-note{font-size:.7rem;color:var(--muted);margin-top:8px;letter-spacing:.04em}
+
+  /* type */
+  .type-row{display:grid;grid-template-columns:1fr;gap:34px}
+  .aa{font-family:var(--serif);font-weight:300;font-variation-settings:"opsz" 144,"SOFT" 40,"WONK" 1;
+    font-size:clamp(5rem,18vw,11rem);line-height:.8;color:var(--ivory)}
+  .aa span{color:var(--gold-soft);font-style:italic}
+  .specimen{font-family:var(--serif);font-weight:380;font-variation-settings:"opsz" 144,"WONK" 1;
+    font-size:clamp(2.2rem,6vw,4.4rem);line-height:.92;letter-spacing:-.02em}
+  .specimen em{font-style:italic;font-weight:300;color:var(--gold-soft)}
+  .face-meta{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .body-spec{color:var(--muted);max-width:54ch;line-height:1.7;font-size:1.0625rem}
+  .scale{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px}
+  .scale span{font-size:.72rem;color:var(--muted);letter-spacing:.04em}
+  .scale b{color:var(--ivory);font-weight:500}
+
+  /* components */
+  .comp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;align-items:start}
+  .panel{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:24px}
+  .panel .pl{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:block}
+  .btn{font-family:var(--grotesk);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+    padding:14px 26px;background:var(--gold);color:var(--ink);border:1px solid rgba(200,164,92,.55);border-radius:4px;display:inline-block;cursor:pointer}
+  .btn-ghost{background:transparent;color:var(--ivory);border-color:rgba(243,236,226,.28);margin-top:12px}
+  .ey-s{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;font-weight:600;background:var(--irid);background-size:240%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  .cap{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .cap b{color:var(--ivory);font-weight:500}
+  .rl{height:1px;background:var(--line);margin:16px 0}
+  .rl-i{height:1px;background:var(--irid);background-size:200%}
+  /* editorial card */
+  .card .plate{aspect-ratio:4/5;border-radius:6px;border:1px solid var(--line);
+    background:linear-gradient(160deg,rgba(58,22,32,.5),rgba(21,16,15,.95));display:flex;align-items:flex-end;padding:16px}
+  .card .plate .num{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:1rem}
+  .card h4{font-family:var(--serif);font-weight:380;font-size:1.5rem;margin:14px 0 4px}
+  /* index */
+  .idx a{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid var(--line);text-decoration:none}
+  .idx a:last-child{border-bottom:1px solid var(--line)}
+  .idx .ci{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .idx .cn{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:.8rem}
+
+  .notes{background:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:24px 28px;color:var(--muted);font-size:.9rem;line-height:1.7}
+  .notes b{color:var(--ivory);font-weight:500}
+</style>
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="wrap">
+    <header>
+      <span class="eyebrow">Brand system — Volume SS·26</span>
+      <h1 class="word">House of <em>Nycayen Moore</em></h1>
+      <p class="tagline">Hair as couture — an atelier &amp; a house.</p>
+    </header>
+
+    <section>
+      <div class="sec-label"><span class="n">01</span><span class="t">Palette</span><span class="bar"></span></div>
+      <div class="sw-grid">
+        <div class="sw"><div class="chip" style="background:#0E0B0C"></div><div class="meta"><div class="role">Ink — base</div><div class="hex">#0E0B0C</div></div></div>
+        <div class="sw"><div class="chip" style="background:#15100F"></div><div class="meta"><div class="role">Ink 2 — surface</div><div class="hex">#15100F</div></div></div>
+        <div class="sw"><div class="chip" style="background:#3A1620"></div><div class="meta"><div class="role">Oxblood — glow</div><div class="hex">#3A1620</div></div></div>
+        <div class="sw"><div class="chip" style="background:#241326"></div><div class="meta"><div class="role">Aubergine</div><div class="hex">#241326</div></div></div>
+        <div class="sw"><div class="chip" style="background:#C8A45C"></div><div class="meta"><div class="role">Gold — accent / CTA</div><div class="hex">#C8A45C</div></div></div>
+        <div class="sw"><div class="chip" style="background:#E4CE97"></div><div class="meta"><div class="role">Gold soft — hover</div><div class="hex">#E4CE97</div></div></div>
+        <div class="sw"><div class="chip" style="background:#B9A99A"></div><div class="meta"><div class="role">Muted — 2nd text</div><div class="hex">#B9A99A</div></div></div>
+        <div class="sw"><div class="chip" style="background:#F3ECE2"></div><div class="meta"><div class="role">Ivory — text</div><div class="hex">#F3ECE2</div></div></div>
+      </div>
+      <div class="irid-bar"></div>
+      <p class="irid-note">Iridescent sheen — decorative only (eyebrows, hairline rules, transitions). Never body text.</p>
+    </section>
+
+    <section>
+      <div class="sec-label"><span class="n">02</span><span class="t">Typography</span><span class="bar"></span></div>
+      <div class="type-row">
+        <div class="aa">A<span>a</span></div>
+        <div>
+          <p class="face-meta">Display — Fraunces (variable · opsz / SOFT / WONK)</p>
+          <p class="specimen">Nycayen Moore<em>,</em> <em>sculpted.</em></p>
+        </div>
+        <div>
+          <p class="face-meta">Body / UI — Hanken Grotesk</p>
+          <p class="body-spec">Twenty-five years of building looks for the person wearing them — replacement systems, bridal, men's grooming, and editorial styling. New York, and wherever you are.</p>
+          <div class="scale">
+            <span><b>Hero</b> clamp 3–10rem</span><span><b>H2</b> clamp 2.2–5.2rem</span><span><b>Body</b> 1.0625rem / 1.6</span><span><b>Eyebrow</b> .8125rem · caps · +.18em</span>
+          </div>
+        </div>
+        <div>
+          <p class="face-meta">Eyebrow &amp; credit</p>
+          <p class="ey-s" style="display:block;margin-bottom:12px">The category is — transformation</p>
+          <p class="cap">Hair — <b>Nycayen Moore</b> / Look 04 · Volume SS·26 / Photographed in New York</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label"><span class="n">03</span><span class="t">Components</span><span class="bar"></span></div>
+      <div class="comp">
+        <div class="panel">
+          <span class="pl">Buttons</span>
+          <a class="btn">Request an appointment</a>
+          <a class="btn btn-ghost">Enter the lookbook →</a>
+        </div>
+        <div class="panel">
+          <span class="pl">Rules &amp; labels</span>
+          <p class="ey-s" style="display:block">Atelier — 01</p>
+          <div class="rl"></div><p class="cap">Hairline divider</p>
+          <div class="rl-i" style="margin:16px 0"></div><p class="cap">Iridescent rule</p>
+        </div>
+        <div class="panel card">
+          <span class="pl">Editorial card</span>
+          <div class="plate"><span class="num">02</span></div>
+          <h4>Bridal</h4>
+          <p class="cap">The category is — the vow</p>
+        </div>
+        <div class="panel idx">
+          <span class="pl">Category index</span>
+          <a><span class="ci">Hair Replacement</span><span class="cn">01</span></a>
+          <a><span class="ci">Bridal</span><span class="cn">02</span></a>
+          <a><span class="ci">Men's Grooming</span><span class="cn">03</span></a>
+          <a><span class="ci">Styling</span><span class="cn">04</span></a>
+          <a><span class="ci">Editorial &amp; Runway</span><span class="cn">05</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-label"><span class="n">04</span><span class="t">Rules of the house</span><span class="bar"></span></div>
+      <div class="notes">
+        <b>Imagery:</b> hair as medium, sculpture, material, light — never a person, a face, or a fabricated result.<br>
+        <b>Motion:</b> scroll-driven, never scroll-jacked; one bold move per screen; <b>prefers-reduced-motion</b> fully respected.<br>
+        <b>Contrast:</b> ivory ≈16:1, muted ≈8:1 on ink. Re-verify any new gold-on-color text at ≥4.5:1.<br>
+        <b>Restraint:</b> the iridescent sheen is the single indulgence — everything around it stays quiet and editorial.
+      </div>
+    </section>
+  </div>
+</body>
+</html>

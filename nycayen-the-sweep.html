@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>House of Nycayen — The Sweep (Hero Concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0B0C; --ivory:#F3ECE2; --muted:#B9A99A; --gold:#C8A45C; --gold-soft:#E4CE97;
+    --irid:linear-gradient(100deg,#E7B6C6,#C8A45C 26%,#9FD7C9 52%,#B9A6E0 76%,#E7B6C6);
+    --grotesk:'Hanken Grotesk',system-ui,sans-serif; --serif:'Fraunces',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--ink);color:var(--ivory);font-family:var(--grotesk);overflow:hidden}
+  .stage{position:relative;width:100%;height:100vh;isolation:isolate;
+    background:radial-gradient(120% 90% at 50% -8%,rgba(58,22,32,.5),rgba(36,19,38,.28) 34%,rgba(14,11,12,0) 60%),var(--ink)}
+  .spot{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(460px 460px at var(--mx,50%) var(--my,42%),rgba(231,182,198,.10),rgba(200,164,92,.06) 30%,transparent 62%)}
+  .grain{position:absolute;inset:-100%;z-index:4;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation:grain 7s steps(6) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-5%,3%)}50%{transform:translate(4%,-4%)}75%{transform:translate(-3%,4%)}100%{transform:translate(0,0)}}
+
+  /* masthead sits behind the hair, revealed by the sweep */
+  .lede{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 8vw}
+  .eyebrow,.mast,.sub,.cta{opacity:0;transform:translateY(18px);transition:opacity 1s ease,transform 1.1s cubic-bezier(.22,1,.36,1)}
+  .open .eyebrow{opacity:1;transform:none;transition-delay:.05s}
+  .open .mast{opacity:1;transform:none;transition-delay:.18s}
+  .open .sub{opacity:1;transform:none;transition-delay:.36s}
+  .open .cta{opacity:1;transform:none;transition-delay:.5s}
+  .eyebrow{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;font-weight:600;margin-bottom:24px;
+    background:var(--irid);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite}
+  @keyframes sheen{to{background-position:240% 0}}
+  .mast{font-family:var(--serif);font-optical-sizing:auto;font-weight:380;font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1;
+    line-height:.86;letter-spacing:-.02em;font-size:clamp(3rem,12vw,10rem)}
+  .mast em{font-style:italic;font-weight:300;font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 0;color:var(--gold-soft)}
+  .sub{font-size:clamp(.92rem,1.3vw,1.05rem);line-height:1.6;color:var(--muted);max-width:46ch;margin-top:24px}
+  .cta{margin-top:36px;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+    border:1px solid rgba(200,164,92,.55);color:var(--gold-soft);padding:16px 30px;border-radius:1px;text-decoration:none;display:inline-block}
+
+  /* the hair curtain */
+  #hair{position:absolute;inset:0;z-index:3;width:100%;height:100%;display:block}
+
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(18px,4vw,48px)}
+  .mark{font-family:var(--serif);font-style:italic;font-weight:340;font-size:1.05rem}
+  .mark b{font-style:normal;font-weight:560}
+  .replay{z-index:6;background:none;border:1px solid rgba(243,236,226,.22);color:var(--muted);font:inherit;font-size:.62rem;
+    letter-spacing:.2em;text-transform:uppercase;padding:9px 16px;border-radius:1px;cursor:pointer;position:absolute;bottom:22px;right:clamp(18px,4vw,48px);transition:color .3s,border-color .3s}
+  .replay:hover{color:var(--ivory);border-color:var(--gold-soft)}
+  @media (prefers-reduced-motion:reduce){.grain,.eyebrow{animation:none}.spot,.replay{display:none}}
+</style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <div class="spot" id="spot"></div>
+
+    <div class="lede">
+      <span class="eyebrow">The category is — transformation</span>
+      <h1 class="mast">Nycayen<br>Moore<em>,</em> <em>sculpted.</em></h1>
+      <p class="sub">Hair as couture — for the runway, the ball, the aisle, and the everyday.</p>
+      <a class="cta" href="#">Request an appointment</a>
+    </div>
+
+    <canvas id="hair"></canvas>
+    <div class="grain"></div>
+
+    <div class="topbar"><div class="mark">House of <b>Nycayen Moore</b></div></div>
+    <button class="replay" id="replay">↻ Replay</button>
+  </main>
+
+  <script>
+  (function(){
+    var cv=document.getElementById('hair'), ctx=cv.getContext('2d'), spot=document.getElementById('spot');
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W=0,H=0,dpr=1,strands=[],start=null,revealed=false,raf=null;
+    var HOLD=650, DUR=1750;
+    var palette=['#241913','#3A2819','#553A24','#74512F','#9A7340','#C8A45C','#E4CE97'];
+
+    function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+    function easeOut(x){return 1-Math.pow(1-x,3);}
+
+    function build(){
+      strands=[];
+      var step=Math.max(4, W/Math.min(170, Math.max(70, Math.floor(W/6))));
+      for(var x=-30; x<W+30; x += step*(0.55+Math.random()*0.8)){
+        strands.push({
+          x0:x, amp:6+Math.random()*22, freq:0.004+Math.random()*0.006,
+          phase:Math.random()*Math.PI*2, speed:0.0006+Math.random()*0.0009,
+          w:1+Math.random()*2.3, delay:x/W, gloss:Math.random()>0.62,
+          c:palette[(Math.random()*palette.length)|0]
+        });
+      }
+    }
+    function size(){
+      dpr=Math.min(window.devicePixelRatio||1,2);
+      W=cv.clientWidth; H=cv.clientHeight;
+      cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+      build();
+    }
+
+    function drawStrand(s,sweep,t){
+      var local=clamp((sweep - s.delay*0.35)/0.65, 0, 1);
+      var e=easeOut(local);
+      var push=e*(W*1.18)*(1.0 - s.x0/W*0.25);
+      var arc=Math.sin(e*Math.PI)*42;
+      ctx.beginPath();
+      var steps=16;
+      for(var i=0;i<=steps;i++){
+        var y=H*i/steps;
+        var wave=Math.sin(y*s.freq + s.phase + t*s.speed)*s.amp*(1-e*0.6);
+        var x=s.x0+wave+push;
+        var yy=y - arc*(1 - y/H);
+        if(i===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy);
+      }
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.globalAlpha=0.92*(1-e*0.12); ctx.strokeStyle=s.c; ctx.lineWidth=s.w; ctx.stroke();
+      if(s.gloss){ ctx.globalAlpha=0.18*(1-e); ctx.strokeStyle='#F3ECE2'; ctx.lineWidth=Math.max(0.5,s.w*0.4); ctx.stroke(); }
+      ctx.globalAlpha=1;
+    }
+
+    function render(ts){
+      if(start==null) start=ts;
+      var sweep = reduce ? 1 : clamp((ts-start-HOLD)/DUR, 0, 1);
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<strands.length;i++) drawStrand(strands[i], sweep, ts);
+      if(!revealed && sweep>0.5){ revealed=true; document.body.classList.add('open'); }
+      if(!reduce && sweep<1) raf=requestAnimationFrame(render);
+      else if(!reduce){ raf=requestAnimationFrame(render); } // keep strands breathing after sweep
+    }
+    function play(){ start=null; revealed=false; document.body.classList.remove('open'); if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(render); }
+
+    if(!reduce){
+      window.addEventListener('pointermove',function(e){
+        spot.style.setProperty('--mx',(e.clientX/window.innerWidth*100).toFixed(1)+'%');
+        spot.style.setProperty('--my',(e.clientY/window.innerHeight*100).toFixed(1)+'%');
+      });
+    }
+    window.addEventListener('resize', function(){ size(); });
+    document.getElementById('replay').addEventListener('click', play);
+
+    size();
+    if(reduce){ document.body.classList.add('open'); render(0); }
+    else { raf=requestAnimationFrame(render); }
+  })();
+  </script>
+</body>
+</html>

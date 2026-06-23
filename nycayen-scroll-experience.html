@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>House of Nycayen — Scroll Experience (Concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0B0C; --ink-2:#15100F; --ivory:#F3ECE2; --muted:#B9A99A;
+    --gold:#C8A45C; --gold-soft:#E4CE97;
+    --irid:linear-gradient(100deg,#E7B6C6,#C8A45C 26%,#9FD7C9 52%,#B9A6E0 76%,#E7B6C6);
+    --grotesk:'Hanken Grotesk',system-ui,sans-serif; --serif:'Fraunces',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--ink); color:var(--ivory); font-family:var(--grotesk); -webkit-font-smoothing:antialiased}
+  body{overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* fixed atmosphere */
+  .atmos{position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(120% 90% at 50% -8%, rgba(58,22,32,.55), rgba(36,19,38,.30) 34%, rgba(14,11,12,0) 60%),
+      radial-gradient(140% 120% at 50% 118%, rgba(200,164,92,.10), rgba(14,11,12,0) 50%),
+      var(--ink);}
+  .spot{position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(440px 440px at var(--mx,50%) var(--my,40%), rgba(231,182,198,.10), rgba(200,164,92,.06) 30%, transparent 62%);}
+  .grain{position:fixed; inset:-100%; z-index:2; pointer-events:none; opacity:.06; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation:grain 7s steps(6) infinite;}
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-5%,3%)}50%{transform:translate(4%,-4%)}75%{transform:translate(-3%,4%)}100%{transform:translate(0,0)}}
+
+  /* chrome: progress + bar + escape hatch */
+  .progress{position:fixed; top:0; left:0; height:2px; width:100%; z-index:40;
+    background:var(--irid); background-size:200% 100%; transform:scaleX(0); transform-origin:left;}
+  .topbar{position:fixed; top:0; left:0; right:0; z-index:30; display:flex; align-items:center; justify-content:space-between;
+    padding:20px clamp(18px,4vw,48px); pointer-events:none;}
+  .topbar a,.topbar .mark{pointer-events:auto}
+  .mark{font-family:var(--serif); font-style:italic; font-weight:340; font-size:1.05rem}
+  .mark b{font-style:normal; font-weight:560}
+  .book{font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    border:1px solid rgba(200,164,92,.55); color:var(--gold-soft); padding:11px 20px; border-radius:1px;
+    transition:background .3s,color .3s}
+  .book:hover{background:var(--gold); color:var(--ink)}
+
+  /* scenes */
+  main{position:relative; z-index:10}
+  .scene{position:relative; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding:8vh clamp(20px,6vw,80px);}
+  .persp{perspective:1200px}
+  .layer3d{transform-style:preserve-3d}
+
+  .eyebrow{font-size:.72rem; letter-spacing:.34em; text-transform:uppercase; font-weight:600;
+    background:var(--irid); background-size:240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:sheen 6s linear infinite; display:inline-block; margin-bottom:26px}
+  @keyframes sheen{to{background-position:240% 0}}
+  .mast{font-family:var(--serif); font-optical-sizing:auto; font-weight:380;
+    font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1; line-height:.86; letter-spacing:-.02em;
+    font-size:clamp(3rem,12vw,10rem)}
+  .mast em{font-style:italic; font-weight:300; font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 0; color:var(--gold-soft)}
+  .sub{font-size:clamp(.92rem,1.3vw,1.08rem); line-height:1.65; color:var(--muted); max-width:48ch; margin:26px auto 0}
+  .credit{font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); opacity:.8; margin-top:22px}
+  .credit b{color:var(--ivory); font-weight:500}
+  .h2{font-family:var(--serif); font-weight:360; font-variation-settings:"opsz" 144,"WONK" 1;
+    font-size:clamp(2.2rem,6vw,5rem); line-height:.96; letter-spacing:-.01em}
+  .lead{font-family:var(--serif); font-style:italic; font-weight:330; font-size:clamp(1.1rem,2.4vw,1.8rem); color:var(--muted); margin-top:18px}
+
+  .cover-deep{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--serif); font-style:italic; font-weight:300; font-size:clamp(2rem,7vw,6rem);
+    color:var(--gold-soft); opacity:0; pointer-events:none}
+  .cover-deep span{font-size:.32em; letter-spacing:.3em; text-transform:uppercase; font-style:normal;
+    font-family:var(--grotesk); color:var(--muted); margin-right:.7em; align-self:center}
+
+  /* runway plates */
+  .runway-stage{position:relative; width:100%}
+  .runway-plate{max-width:760px; margin:14vh auto}
+  .num{font-family:var(--serif); font-style:italic; color:var(--gold); font-size:1.1rem; display:block; margin-bottom:10px}
+  .emcee{font-size:.72rem; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); margin-top:16px}
+
+  /* motion grid */
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; max-width:980px; width:100%}
+  .tile{aspect-ratio:3/4; border:.5px solid rgba(243,236,226,.14); border-radius:2px;
+    background:linear-gradient(160deg, rgba(58,22,32,.45), rgba(21,16,15,.9));
+    display:flex; align-items:flex-end; padding:14px; font-size:.6rem; letter-spacing:.18em; text-transform:uppercase; color:var(--muted)}
+
+  .book-inner{max-width:760px}
+  .btn{font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+    padding:18px 34px; border:1px solid rgba(200,164,92,.55); color:var(--ink); background:var(--gold);
+    border-radius:1px; display:inline-block; margin-top:30px; transition:transform .3s,background .3s}
+  .btn:hover{background:var(--gold-soft); transform:translateY(-2px)}
+
+  .cue{margin-top:40px; display:inline-flex; align-items:center; gap:12px; color:var(--muted)}
+  .cue .rule{width:120px; height:1px; background:var(--irid); background-size:200% 100%; animation:sheen 5s linear infinite}
+  .cue span{font-size:.62rem; letter-spacing:.28em; text-transform:uppercase}
+
+  /* 3D mode (only when motion allowed) */
+  .fx-on .runway-stage{height:100vh; transform-style:preserve-3d}
+  .fx-on .runway-plate{position:absolute; top:50%; left:50%; width:min(760px,84vw); margin:0; transform:translate(-50%,-50%)}
+
+  @media (prefers-reduced-motion:reduce){
+    .grain,.eyebrow,.cue .rule{animation:none}
+    .spot{display:none}
+  }
+</style>
+</head>
+<body>
+  <div class="atmos"></div>
+  <div class="spot" id="spot"></div>
+  <div class="grain"></div>
+  <div class="progress" id="progress"></div>
+
+  <div class="topbar">
+    <div class="mark">House of <b>Nycayen Moore</b></div>
+    <a class="book" href="#book">Request an appointment</a>
+  </div>
+
+  <main>
+    <!-- 1 — COVER -->
+    <section class="scene persp layer3d" id="cover">
+      <div class="cover-deep" id="coverDeep"><span>01</span>Transformation</div>
+      <div>
+        <div class="eyebrow cover-eyebrow">The category is — transformation</div>
+        <h1 class="mast cover-mast">Nycayen<br>Moore<em>,</em> <em>sculpted.</em></h1>
+        <p class="sub cover-sub">Hair as couture — for the runway, the ball, the aisle, and the everyday.</p>
+        <div class="cue cover-sub"><div class="rule"></div><span>Scroll — the show begins</span></div>
+      </div>
+    </section>
+
+    <!-- 2 — THE HOUSE -->
+    <section class="scene persp" id="house">
+      <div class="layer3d">
+        <div class="eyebrow reveal">The House</div>
+        <h2 class="h2 reveal">Great hair can<br>change a life.</h2>
+        <p class="lead zfloat">An atelier &amp; a house — New York, and wherever you are.</p>
+        <p class="sub reveal">Twenty-five years of replacement systems, bridal, men's grooming, and editorial styling. Every look is built for the person wearing it.</p>
+      </div>
+    </section>
+
+    <!-- 3 — THE RUNWAY -->
+    <section class="scene persp layer3d" id="runway">
+      <div class="runway-stage layer3d">
+        <div class="runway-plate">
+          <span class="num">01</span><h2 class="h2">Hair Replacement</h2>
+          <p class="sub">Wigs, men's systems, and human-hair work, matched to you and built to disappear.</p>
+          <p class="emcee">The category is — realness</p>
+        </div>
+        <div class="runway-plate">
+          <span class="num">02</span><h2 class="h2">Bridal</h2>
+          <p class="sub">The aisle look, rehearsed and resolved. On location, on the day.</p>
+          <p class="emcee">The category is — the vow</p>
+        </div>
+        <div class="runway-plate">
+          <span class="num">03</span><h2 class="h2">Men's Grooming</h2>
+          <p class="sub">Precision cuts and grooming for the modern face.</p>
+          <p class="emcee">The category is — executive</p>
+        </div>
+        <div class="runway-plate">
+          <span class="num">04</span><h2 class="h2">Styling</h2>
+          <p class="sub">Cut, color, and finish — versatile looks for any room you walk into.</p>
+          <p class="emcee">The category is — runway ready</p>
+        </div>
+        <div class="runway-plate">
+          <span class="num">05</span><h2 class="h2">Editorial &amp; Runway</h2>
+          <p class="sub">Sets, shows, and shoots. Hair direction for the camera and the floor.</p>
+          <p class="emcee">The category is — legendary</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — IN MOTION -->
+    <section class="scene persp" id="motion">
+      <div class="layer3d" style="width:100%">
+        <div class="eyebrow reveal">In motion</div>
+        <h2 class="h2 reveal" style="margin-bottom:34px">Recent work</h2>
+        <div class="grid">
+          <div class="tile zfloat">Reel — look 04</div>
+          <div class="tile zfloat">Reel — bridal</div>
+          <div class="tile zfloat">Reel — grooming</div>
+          <div class="tile zfloat">Reel — set</div>
+        </div>
+        <p class="credit" style="margin-top:24px">Live from <b>@nycayenmoore</b></p>
+      </div>
+    </section>
+
+    <!-- 5 — ARRIVAL / BOOK -->
+    <section class="scene persp layer3d" id="book">
+      <div class="book-inner">
+        <div class="eyebrow">Appointments</div>
+        <h2 class="h2">Begin with<br>a consultation.</h2>
+        <p class="sub">Every look is bespoke — to your hair, your goals, and your occasion. Tell the House what you're after.</p>
+        <a class="btn" href="#">Request an appointment</a>
+        <p class="credit" style="margin-top:30px">265 W 37th St · New York · <b>(347) 556-3860</b></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script>
+  (function(){
+    var spot = document.getElementById('spot');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!reduce){
+      window.addEventListener('pointermove', function(e){
+        spot.style.setProperty('--mx', (e.clientX/window.innerWidth*100).toFixed(1)+'%');
+        spot.style.setProperty('--my', (e.clientY/window.innerHeight*100).toFixed(1)+'%');
+      });
+    }
+    if(reduce || !window.gsap || !window.ScrollTrigger){ return; }
+
+    gsap.registerPlugin(ScrollTrigger);
+    document.body.classList.add('fx-on');
+    gsap.config({ nullTargetWarn:false });
+
+    /* progress bar */
+    gsap.to('#progress',{ scaleX:1, ease:'none',
+      scrollTrigger:{ trigger:'body', start:'top top', end:'bottom bottom', scrub:0 }});
+
+    /* 1 — cover: fly the camera through the wordmark, depth emerges */
+    gsap.timeline({ scrollTrigger:{ trigger:'#cover', start:'top top', end:'+=140%', pin:true, scrub:1 }})
+      .to('.cover-eyebrow',{ opacity:0, y:-28, duration:.3 },0)
+      .to('.cover-sub',{ opacity:0, duration:.3 },0)
+      .to('.cover-mast',{ z:780, scale:2.7, opacity:0, filter:'blur(8px)', ease:'power1.in', duration:1 },0)
+      .fromTo('#coverDeep',{ z:-1100, opacity:0, scale:.25 },{ z:140, opacity:.85, scale:1.1, ease:'none', duration:1 },0);
+
+    /* 3 — runway: each category flies in from deep Z, lands, passes the camera */
+    var plates = gsap.utils.toArray('.runway-plate');
+    var rtl = gsap.timeline({ scrollTrigger:{ trigger:'#runway', start:'top top', end:'+='+(plates.length*82)+'%', pin:true, scrub:1 }});
+    plates.forEach(function(p,i){
+      rtl.fromTo(p,{ z:-1400, scale:.16, opacity:0, rotateY:10 },
+                   { z:0, scale:1, opacity:1, rotateY:0, ease:'power2.out', duration:.55 }, i)
+         .to(p,{ z:720, scale:2.4, opacity:0, ease:'power2.in', duration:.55 }, i+.55);
+    });
+
+    /* 5 — book: arrives from depth */
+    gsap.timeline({ scrollTrigger:{ trigger:'#book', start:'top top', end:'+=90%', pin:true, scrub:1 }})
+      .fromTo('.book-inner',{ z:-680, opacity:0, scale:.62 },{ z:0, opacity:1, scale:1, ease:'power2.out', duration:1 },0);
+
+    /* interludes — scroll reveals + Z float */
+    gsap.utils.toArray('.reveal').forEach(function(el){
+      gsap.fromTo(el,{ y:56, opacity:0 },{ y:0, opacity:1, ease:'none',
+        scrollTrigger:{ trigger:el, start:'top 86%', end:'top 48%', scrub:1 }});
+    });
+    gsap.utils.toArray('.zfloat').forEach(function(el){
+      gsap.fromTo(el,{ z:-460, opacity:0 },{ z:0, opacity:1, ease:'none',
+        scrollTrigger:{ trigger:el, start:'top 92%', end:'top 52%', scrub:1 }});
+    });
+  })();
+  </script>
+</body>
+</html>

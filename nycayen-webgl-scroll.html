@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>House of Nycayen — WebGL Scroll Experience (Concept)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E0B0C; --ivory:#F3ECE2; --muted:#B9A99A; --gold:#C8A45C; --gold-soft:#E4CE97;
+    --irid:linear-gradient(100deg,#E7B6C6,#C8A45C 26%,#9FD7C9 52%,#B9A6E0 76%,#E7B6C6);
+    --grotesk:'Hanken Grotesk',system-ui,sans-serif; --serif:'Fraunces',Georgia,serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:auto}
+  body{background:var(--ink);color:var(--ivory);font-family:var(--grotesk);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  #scene{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .spot{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(480px 480px at var(--mx,50%) var(--my,42%),rgba(231,182,198,.10),rgba(200,164,92,.06) 30%,transparent 62%)}
+  .grain{position:fixed;inset:-100%;z-index:6;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation:grain 7s steps(6) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-5%,3%)}50%{transform:translate(4%,-4%)}75%{transform:translate(-3%,4%)}100%{transform:translate(0,0)}}
+
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:8;display:flex;justify-content:space-between;align-items:center;padding:22px clamp(18px,4vw,48px);pointer-events:none}
+  .topbar .mark,.topbar a{pointer-events:auto}
+  .mark{font-family:var(--serif);font-style:italic;font-weight:340;font-size:1.05rem}
+  .mark b{font-style:normal;font-weight:560}
+  .book{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;border:1px solid rgba(200,164,92,.55);color:var(--gold-soft);padding:11px 20px;border-radius:1px;transition:background .3s,color .3s}
+  .book:hover{background:var(--gold);color:var(--ink)}
+  .progress{position:fixed;top:0;left:0;height:2px;width:100%;z-index:9;background:var(--irid);background-size:200% 100%;transform:scaleX(0);transform-origin:left}
+
+  .beat{position:fixed;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 8vw;
+    opacity:0;transform:translateY(22px);transition:opacity .9s ease,transform 1s cubic-bezier(.22,1,.36,1);pointer-events:none}
+  .beat.active{opacity:1;transform:none;pointer-events:auto}
+  .eyebrow{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;font-weight:600;margin-bottom:22px;
+    background:var(--irid);background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s linear infinite}
+  @keyframes sheen{to{background-position:240% 0}}
+  .mast{font-family:var(--serif);font-optical-sizing:auto;font-weight:380;font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1;line-height:.86;letter-spacing:-.02em;font-size:clamp(3rem,12vw,10rem)}
+  .mast em{font-style:italic;font-weight:300;font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 0;color:var(--gold-soft)}
+  .h2{font-family:var(--serif);font-weight:360;font-variation-settings:"opsz" 144,"WONK" 1;font-size:clamp(2.2rem,7vw,5.2rem);line-height:.96;letter-spacing:-.01em}
+  .num{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:1.1rem;display:block;margin-bottom:8px}
+  .emcee{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-top:16px}
+  .sub{font-size:clamp(.92rem,1.3vw,1.05rem);line-height:1.6;color:var(--muted);max-width:46ch;margin-top:22px}
+  .btn{margin-top:30px;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;border:1px solid rgba(200,164,92,.55);color:var(--ink);background:var(--gold);padding:17px 32px;border-radius:1px;display:inline-block;transition:background .3s,transform .3s}
+  .btn:hover{background:var(--gold-soft);transform:translateY(-2px)}
+  .credit{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);opacity:.8;margin-top:26px}
+  .credit b{color:var(--ivory);font-weight:500}
+  .cue{margin-top:38px;display:inline-flex;align-items:center;gap:12px;color:var(--muted)}
+  .cue .rule{width:120px;height:1px;background:var(--irid);background-size:200% 100%;animation:sheen 5s linear infinite}
+  .cue span{font-size:.62rem;letter-spacing:.28em;text-transform:uppercase}
+
+  #space{height:720vh}
+
+  /* fallback: no WebGL or reduced motion → readable stacked page */
+  .static #space{display:none}
+  .static .beat{position:relative;inset:auto;opacity:1;transform:none;pointer-events:auto;min-height:92vh}
+  .static .cue{display:none}
+  @media (prefers-reduced-motion:reduce){.grain,.eyebrow,.cue .rule{animation:none}.spot{display:none}}
+</style>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+  <div class="spot" id="spot"></div>
+
+  <div class="topbar"><div class="mark">House of <b>Nycayen Moore</b></div><a class="book" href="#appointment">Request an appointment</a></div>
+  <div class="progress" id="bar"></div>
+
+  <section class="beat" data-start="0.00" data-end="0.09">
+    <span class="eyebrow">The category is — transformation</span>
+    <h1 class="mast">Nycayen<br>Moore<em>,</em> <em>sculpted.</em></h1>
+    <div class="cue"><div class="rule"></div><span>Scroll — enter the House</span></div>
+  </section>
+
+  <section class="beat" data-start="0.15" data-end="0.25">
+    <span class="eyebrow">The House</span>
+    <h2 class="h2">Great hair can<br>change a life.</h2>
+    <p class="sub">An atelier &amp; a house — New York, and wherever you are. Twenty-five years of building looks for the person wearing them.</p>
+  </section>
+
+  <section class="beat" data-start="0.30" data-end="0.39">
+    <span class="num">01</span><h2 class="h2">Hair Replacement</h2>
+    <p class="sub">Wigs, men's systems, and human-hair work — matched to you, built to disappear.</p>
+    <p class="emcee">The category is — realness</p>
+  </section>
+
+  <section class="beat" data-start="0.42" data-end="0.51">
+    <span class="num">02</span><h2 class="h2">Bridal</h2>
+    <p class="sub">The aisle look, rehearsed and resolved. On location, on the day.</p>
+    <p class="emcee">The category is — the vow</p>
+  </section>
+
+  <section class="beat" data-start="0.54" data-end="0.62">
+    <span class="num">03</span><h2 class="h2">Men's Grooming</h2>
+    <p class="sub">Precision cuts and grooming for the modern face.</p>
+    <p class="emcee">The category is — executive</p>
+  </section>
+
+  <section class="beat" data-start="0.65" data-end="0.73">
+    <span class="num">04</span><h2 class="h2">Styling</h2>
+    <p class="sub">Cut, color, and finish — for any room you walk into.</p>
+    <p class="emcee">The category is — runway ready</p>
+  </section>
+
+  <section class="beat" data-start="0.76" data-end="0.85">
+    <span class="num">05</span><h2 class="h2">Editorial &amp; Runway</h2>
+    <p class="sub">Sets, shows, and shoots. Hair direction for the camera and the floor.</p>
+    <p class="emcee">The category is — legendary</p>
+  </section>
+
+  <section class="beat" id="appointment" data-start="0.90" data-end="1.00">
+    <span class="eyebrow">Appointments</span>
+    <h2 class="h2">Begin with<br>a consultation.</h2>
+    <p class="sub">Every look is bespoke — to your hair, your goals, your occasion. Tell the House what you're after.</p>
+    <a class="btn" href="#">Request an appointment</a>
+    <p class="credit">265 W 37th St · New York · <b>(347) 556-3860</b></p>
+  </section>
+
+  <div class="grain"></div>
+  <div id="space"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var beats = Array.prototype.slice.call(document.querySelectorAll('.beat'));
+    var bar = document.getElementById('bar');
+    var spot = document.getElementById('spot');
+    var canvas = document.getElementById('scene');
+    function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+    function updateBeats(p){
+      for(var i=0;i<beats.length;i++){
+        var s=+beats[i].dataset.start, e=+beats[i].dataset.end;
+        if(p>=s-0.03 && p<=e+0.03) beats[i].classList.add('active'); else beats[i].classList.remove('active');
+      }
+    }
+    if(!reduce){
+      window.addEventListener('pointermove', function(ev){
+        spot.style.setProperty('--mx',(ev.clientX/window.innerWidth*100).toFixed(1)+'%');
+        spot.style.setProperty('--my',(ev.clientY/window.innerHeight*100).toFixed(1)+'%');
+      });
+    }
+    if(!window.THREE){ document.body.classList.add('static'); updateBeats(0); return; }
+
+    try{
+      var scene=new THREE.Scene();
+      scene.fog=new THREE.Fog(0x0E0B0C, 260, 1550);
+      var camera=new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 2600);
+      camera.position.set(0,0,160);
+      var renderer=new THREE.WebGLRenderer({canvas:canvas, antialias:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x0E0B0C, 1);
+
+      var palette=[0x3A2819,0x553A24,0x74512F,0x9A7340,0xC8A45C,0xE4CE97,0xE7B6C6,0x9FD7C9];
+      var group=new THREE.Group();
+      var COUNT=220;
+      for(var i=0;i<COUNT;i++){
+        var segs=22, pos=[];
+        var bx=(Math.random()-0.5)*2000;
+        var bz=-Math.random()*1320 - 20;
+        var amp=10+Math.random()*60, ph=Math.random()*6.283, hgt=600+Math.random()*520;
+        for(var s=0;s<=segs;s++){
+          var f=s/segs, y=(f-0.5)*hgt;
+          pos.push(bx+Math.sin(f*6.283+ph)*amp, y, bz+Math.cos(f*4.7+ph)*amp*0.6);
+        }
+        var g=new THREE.BufferGeometry();
+        g.setAttribute('position', new THREE.Float32BufferAttribute(pos,3));
+        var warm = Math.random()<0.86;
+        var ci = warm ? (Math.random()*6|0) : 6+(Math.random()*2|0);
+        var m=new THREE.LineBasicMaterial({color:palette[ci], transparent:true, opacity:0.4+Math.random()*0.5});
+        group.add(new THREE.Line(g,m));
+      }
+      scene.add(group);
+
+      var camStart=160, camEnd=-1050, targetZ=camStart, mx=0, tmx=0;
+      function onScroll(){
+        var max=document.body.scrollHeight-window.innerHeight;
+        var p=max>0?clamp(window.scrollY/max,0,1):0;
+        targetZ=camStart+p*(camEnd-camStart);
+        bar.style.transform='scaleX('+p.toFixed(4)+')';
+        updateBeats(p);
+      }
+
+      if(reduce){
+        document.body.classList.add('static');
+        renderer.render(scene,camera);
+        return;
+      }
+
+      window.addEventListener('scroll', onScroll, {passive:true});
+      window.addEventListener('pointermove', function(ev){ tmx=(ev.clientX/window.innerWidth-0.5)*70; });
+      window.addEventListener('resize', function(){
+        camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight); onScroll();
+      });
+
+      function loop(){
+        requestAnimationFrame(loop);
+        camera.position.z += (targetZ-camera.position.z)*0.06;
+        mx += (tmx-mx)*0.04; camera.position.x = mx;
+        camera.lookAt(0, 0, camera.position.z - 320);
+        group.rotation.z = Math.sin(Date.now()*0.0002)*0.02;
+        renderer.render(scene,camera);
+      }
+      onScroll(); loop();
+    }catch(err){
+      document.body.classList.add('static'); updateBeats(0);
+    }
+  })();
+  </script>
+</body>
+</html>

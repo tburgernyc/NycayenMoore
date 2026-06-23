@@ -1,0 +1,85 @@
+/* ============================================================
+   HOUSE OF NYCAYEN — DESIGN TOKENS
+   Import this into Claude Design as the project design system.
+   Hair is shown as medium/sculpture/material — never a person or a result.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&family=Hanken+Grotesk:wght@300..700&display=swap');
+
+:root{
+  /* ---- Color (contrast verified against --ink) ---- */
+  --ink:#0E0B0C;          /* base stage (warm near-black)        */
+  --ink-2:#15100F;        /* raised surfaces                     */
+  --ink-3:#1E1815;        /* cards / inputs                      */
+  --oxblood:#3A1620;      /* atmospheric glow                    */
+  --aubergine:#241326;    /* atmospheric tone                    */
+  --ivory:#F3ECE2;        /* primary text   (~16:1, AAA)         */
+  --muted:#B9A99A;        /* secondary text (~8:1, AAA)          */
+  --gold:#C8A45C;         /* accent / primary CTA / credits (~8:1)*/
+  --gold-soft:#E4CE97;    /* hover / large display accents       */
+  --line:rgba(243,236,226,.14);   /* hairline dividers          */
+  --line-gold:rgba(200,164,92,.22);
+
+  /* iridescent sheen — DECORATIVE ONLY (eyebrows, rules, transitions). Never body text. */
+  --irid:linear-gradient(100deg,#E7B6C6,#C8A45C 26%,#9FD7C9 52%,#B9A6E0 76%,#E7B6C6);
+
+  /* ---- Type ---- */
+  --serif:'Fraunces',Georgia,serif;          /* display */
+  --grotesk:'Hanken Grotesk',system-ui,sans-serif; /* body / UI */
+  --fs-hero:clamp(3rem,12vw,10rem);
+  --fs-h2:clamp(2.2rem,7vw,5.2rem);
+  --fs-h3:clamp(1.375rem,2.2vw,1.875rem);
+  --fs-body:1.0625rem;
+  --fs-eyebrow:.8125rem;
+  --track-caps:.18em;     /* eyebrow/caption letter-spacing (0.14–0.34em range) */
+
+  /* ---- Spacing (8px base) ---- */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px;
+  --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px; --s-10:128px;
+
+  /* ---- Radius (low = couture) ---- */
+  --radius-sm:4px; --radius-md:8px;
+
+  /* ---- Motion ---- */
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --dur:.32s;
+}
+
+/* ---- Base ---- */
+body{
+  background:var(--ink); color:var(--ivory);
+  font-family:var(--grotesk); font-size:var(--fs-body); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---- Ready-made classes ---- */
+.eyebrow{
+  font-size:var(--fs-eyebrow); letter-spacing:var(--track-caps); text-transform:uppercase;
+  font-weight:600; background:var(--irid); background-size:240% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.mast{
+  font-family:var(--serif); font-optical-sizing:auto; font-weight:380;
+  font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1;
+  font-size:var(--fs-hero); line-height:.86; letter-spacing:-.02em;
+}
+.mast em{font-style:italic; font-weight:300; font-variation-settings:"opsz" 144,"SOFT" 60,"WONK" 0; color:var(--gold-soft);}
+.h2{font-family:var(--serif); font-weight:360; font-variation-settings:"opsz" 144,"WONK" 1; font-size:var(--fs-h2); line-height:.96; letter-spacing:-.01em;}
+.sub{color:var(--muted); max-width:46ch; line-height:1.6;}
+.credit{font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); opacity:.8;}
+.credit b{color:var(--ivory); font-weight:500;}
+
+.btn{
+  font-family:var(--grotesk); font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600;
+  padding:16px 30px; background:var(--gold); color:var(--ink); border:1px solid rgba(200,164,92,.55);
+  border-radius:var(--radius-sm); display:inline-block; cursor:pointer;
+  transition:background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.btn:hover{background:var(--gold-soft); transform:translateY(-2px);}
+.btn-ghost{background:transparent; color:var(--ivory); border-color:rgba(243,236,226,.28);}
+.btn-ghost:hover{background:transparent; color:var(--gold-soft); border-color:var(--gold-soft);}
+
+.rule{height:1px; background:var(--line);}
+.rule-irid{height:1px; background:var(--irid); background-size:200% 100%;}
+
+@media (prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important;} }
